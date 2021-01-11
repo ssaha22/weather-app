@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,18 +30,19 @@ public class MainActivity extends AppCompatActivity {
     TextView locationName;
     TextView weatherCondition;
     TextView weatherIcon;
+    ProgressBar progressBar;
     FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         temperateUnit = findViewById(R.id.temperatureUnit);
         temperature = findViewById(R.id.temperature);
         locationName = findViewById(R.id.locationName);
         weatherCondition = findViewById(R.id.weatherCondition);
         weatherIcon = findViewById(R.id.weatherIcon);
+        progressBar = findViewById(R.id.progressBar);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
-                                 String coordinates = "lat=" + location.getLatitude() +
+                                String coordinates = "lat=" + location.getLatitude() +
                                         "&lon=" + location.getLongitude();
                                 String url = "https://api.openweathermap.org/data/2.5/weather?"
                                         + coordinates
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                                                         int weatherConditionID = weatherConditionObject.getInt("id");
                                                         String weatherCondition = weatherConditionObject.getString("main");
                                                         JSONObject temperatureObject = response.getJSONObject("main");
-                                                        int temperature = (int) temperatureObject.getDouble("temp");
+                                                        int temperature = (int) Math.round(temperatureObject.getDouble("temp"));
                                                         String locationName = response.getString("name");
                                                         Weather currentWeather = new Weather(temperature, locationName, weatherCondition, weatherConditionID);
                                                         setWeatherData(currentWeather);
@@ -82,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWeatherData(Weather currentWeather) {
+        progressBar.setVisibility(View.GONE);
         temperateUnit.setText(R.string.celsius_symbol);
         temperature.setText(String.valueOf(currentWeather.getTemperature()));
         locationName.setText(currentWeather.getLocationName());

@@ -13,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/temperature"
-        android:layout_marginBottom="-45dp"
+        android:layout_marginStart="-5dp"
+        android:layout_marginBottom="-55dp"
         android:layout_toEndOf="@id/temperature"
         android:textColor="@color/white"
         android:textSize="32sp" />
@@ -53,5 +54,12 @@
         android:fontFamily="@font/weather_icons"
         android:textSize="100sp"
         android:textColor="@color/white"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"/>
 
 </RelativeLayout>
