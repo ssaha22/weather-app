@@ -20,38 +20,43 @@
         android:textSize="32sp" />
 
     <TextView
-            android:id="@+id/temperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/location"
-            android:text="20"
-            android:textSize="72sp"
-            android:textColor="@color/white"/>
+        android:id="@+id/temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/location"
+        android:text="20"
+        android:textSize="72sp"
+        android:textColor="@color/white"/>
 
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/weatherCondition"
-            android:text="Vancouver"
-            android:textSize="48sp"
-            android:textColor="@color/white"/>
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/weatherCondition"
+        android:text="Vancouver"
+        android:textSize="48sp"
+        android:textColor="@color/white"/>
 
-        <TextView
-            android:id="@+id/weatherCondition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Rain"
-            android:textSize="32sp"
-            android:textColor="@color/white"/>
+    <TextView
+        android:id="@+id/weatherCondition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Rain"
+        android:textSize="32sp"
+        android:textColor="@color/white"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/weatherCondition"
-            android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/weatherIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weatherCondition"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/weather_icons"
+        android:text="@string/wi_owm_300"
+        android:textSize="100sp"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>
