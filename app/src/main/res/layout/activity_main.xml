@@ -15,7 +15,6 @@
         android:layout_above="@id/temperature"
         android:layout_marginBottom="-45dp"
         android:layout_toEndOf="@id/temperature"
-        android:text="@string/celsius_symbol"
         android:textColor="@color/white"
         android:textSize="32sp" />
 
@@ -24,18 +23,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@id/location"
-        android:text="20"
+        android:layout_above="@id/locationName"
         android:textSize="72sp"
         android:textColor="@color/white"/>
 
     <TextView
-        android:id="@+id/location"
+        android:id="@+id/locationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/weatherCondition"
-        android:text="Vancouver"
         android:textSize="48sp"
         android:textColor="@color/white"/>
 
@@ -44,7 +41,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Rain"
         android:textSize="32sp"
         android:textColor="@color/white"/>
 
@@ -55,7 +51,6 @@
         android:layout_below="@id/weatherCondition"
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/weather_icons"
-        android:text="@string/wi_owm_300"
         android:textSize="100sp"
         android:textColor="@color/white"/>
 
