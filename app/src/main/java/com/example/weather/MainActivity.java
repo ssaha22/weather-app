@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         queue = Volley.newRequestQueue(this);
 
-        Places.initialize(getApplicationContext(), "AIzaSyAuVPQjfnsX99Y8dUSnysLMJos5fiEOj80");
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.places_api_key));
         PlacesClient placesClient = Places.createClient(this);
 
         initializeSearch();
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getURL(double latitude, double longitude) {
         final String URL = "https://api.openweathermap.org/data/2.5/weather?";
-        final String API_KEY = "9eb0243ad60b07012fa40f831ce447bc";
+        final String API_KEY = getResources().getString(R.string.owm_api_key);
         return String.format(Locale.getDefault(), "%slat=%f&lon=%f&appid=%s&units=metric",
                 URL, latitude, longitude, API_KEY);
     }
