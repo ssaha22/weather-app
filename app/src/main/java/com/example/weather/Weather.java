@@ -15,16 +15,22 @@ public class Weather {
         this.weatherConditionID = weatherConditionID;
     }
 
+    public Weather() {
+        this.temperature = 10;
+        this.locationName = "Vancouver";
+        this.weatherCondition = "Rain";
+        this.weatherConditionID = 500;
+    }
+
     public int getIconID() {
         int iconID;
         String iconName = "wi_owm_" + weatherConditionID;
         try {
-            Class res = R.string.class;
+            Class<R.string> res = R.string.class;
             Field field = res.getField(iconName);
             iconID = field.getInt(null);
         } catch (Exception e) {
-            e.printStackTrace();
-            iconID = R.string.wi_owm_800;
+            iconID = R.string.wi_owm_500;
         }
         return iconID;
     }

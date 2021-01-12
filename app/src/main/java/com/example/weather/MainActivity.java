@@ -2,7 +2,6 @@ package com.example.weather;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,26 +17,31 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    SwipeRefreshLayout swipeRefresh;
     TextView temperateUnit;
     TextView temperature;
     TextView locationName;
     TextView weatherCondition;
     TextView weatherIcon;
     ProgressBar progressBar;
+
     FusedLocationProviderClient fusedLocationClient;
+    RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        swipeRefresh = findViewById(R.id.swipeRefresh);
         temperateUnit = findViewById(R.id.temperatureUnit);
         temperature = findViewById(R.id.temperature);
         locationName = findViewById(R.id.locationName);
@@ -45,46 +50,64 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        queue = Volley.newRequestQueue(this);
 
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                String coordinates = "lat=" + location.getLatitude() +
-                                        "&lon=" + location.getLongitude();
-                                String url = "https://api.openweathermap.org/data/2.5/weather?"
-                                        + coordinates
-                                        + "&appid=9eb0243ad60b07012fa40f831ce447bc&units=metric";
-                                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                                        (Request.Method.GET, url, null,
-                                                response -> {
-                                                    try {
-                                                        JSONArray weather = response.getJSONArray("weather");
-                                                        JSONObject weatherConditionObject = weather.getJSONObject(0);
-                                                        int weatherConditionID = weatherConditionObject.getInt("id");
-                                                        String weatherCondition = weatherConditionObject.getString("main");
-                                                        JSONObject temperatureObject = response.getJSONObject("main");
-                                                        int temperature = (int) Math.round(temperatureObject.getDouble("temp"));
-                                                        String locationName = response.getString("name");
-                                                        Weather currentWeather = new Weather(temperature, locationName, weatherCondition, weatherConditionID);
-                                                        setWeatherData(currentWeather);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                },
-                                                error -> error.printStackTrace());
-                                queue.add(jsonObjectRequest);
-                            }
-                        }
-                    });
+        update();
+
+        swipeRefresh.setOnRefreshListener(this::update);
+    }
+
+    private void update() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    getWeatherData(location.getLatitude(), location.getLongitude());
+                } else {
+                    getWeatherData(49.2827, -123.1207);
+                }
+            });
+        } else {
+            getWeatherData(49.2827, -123.1207);
         }
     }
 
-    private void setWeatherData(Weather currentWeather) {
+    private void getWeatherData(double latitude, double longitude) {
+        String url = getURL(latitude, longitude);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null,
+                        response -> {
+                            Weather currentWeather = parseAPIResponse(response);
+                            displayWeatherData(currentWeather);
+                        },
+                        error -> displayWeatherData(new Weather()));
+        queue.add(jsonObjectRequest);
+    }
+
+    private String getURL(double latitude, double longitude) {
+        final String URL = "https://api.openweathermap.org/data/2.5/weather?";
+        final String API_KEY = "9eb0243ad60b07012fa40f831ce447bc";
+        return String.format(Locale.getDefault(), "%slat=%f&lon=%f&appid=%s&units=metric",
+                URL, latitude, longitude, API_KEY);
+    }
+
+    private Weather parseAPIResponse(JSONObject response) {
+        try {
+            JSONArray weather = response.getJSONArray("weather");
+            JSONObject weatherConditionObject = weather.getJSONObject(0);
+            int weatherConditionID = weatherConditionObject.getInt("id");
+            String weatherCondition = weatherConditionObject.getString("main");
+            JSONObject temperatureObject = response.getJSONObject("main");
+            int temperature = (int) Math.round(temperatureObject.getDouble("temp"));
+            String locationName = response.getString("name");
+            return new Weather(temperature, locationName, weatherCondition, weatherConditionID);
+        } catch (Exception e) {
+            return new Weather();
+        }
+    }
+
+    private void displayWeatherData(Weather currentWeather) {
+        swipeRefresh.setRefreshing(false);
         progressBar.setVisibility(View.GONE);
         temperateUnit.setText(R.string.celsius_symbol);
         temperature.setText(String.valueOf(currentWeather.getTemperature()));
