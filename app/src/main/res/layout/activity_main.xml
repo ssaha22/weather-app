@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    tools:context=".MainActivity">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="@color/searchBarColor">
+
+        <fragment
+            android:id="@+id/autocompleteFragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchBar"
         android:layout_centerInParent="true">
 
         <RelativeLayout
@@ -32,27 +48,27 @@
                 android:id="@+id/temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_above="@id/locationName"
-                android:textSize="72sp"
-                android:textColor="@color/white"/>
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:textSize="72sp" />
 
             <TextView
                 android:id="@+id/locationName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_above="@id/weatherCondition"
-                android:textSize="48sp"
-                android:textColor="@color/white"/>
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:textSize="48sp" />
 
             <TextView
                 android:id="@+id/weatherCondition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:textSize="32sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:textSize="32sp" />
 
             <TextView
                 android:id="@+id/weatherIcon"
@@ -61,15 +77,15 @@
                 android:layout_below="@id/weatherCondition"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="@font/weather_icons"
-                android:textSize="100sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:textSize="100sp" />
 
             <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleLarge"/>
+                android:layout_centerInParent="true" />
 
         </RelativeLayout>
 

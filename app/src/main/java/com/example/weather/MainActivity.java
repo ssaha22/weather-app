@@ -15,22 +15,27 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     SwipeRefreshLayout swipeRefresh;
-    TextView temperateUnit;
-    TextView temperature;
-    TextView locationName;
-    TextView weatherCondition;
-    TextView weatherIcon;
+    TextView temperateUnit, temperature, locationName, weatherCondition, weatherIcon;
     ProgressBar progressBar;
 
     FusedLocationProviderClient fusedLocationClient;
@@ -52,12 +57,37 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         queue = Volley.newRequestQueue(this);
 
-        update();
+        Places.initialize(getApplicationContext(), "AIzaSyAuVPQjfnsX99Y8dUSnysLMJos5fiEOj80");
+        PlacesClient placesClient = Places.createClient(this);
 
-        swipeRefresh.setOnRefreshListener(this::update);
+        initializeSearch();
+
+        getCurrentLocationWeather();
+
+        swipeRefresh.setOnRefreshListener(this::getCurrentLocationWeather);
     }
 
-    private void update() {
+    private void initializeSearch() {
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocompleteFragment);
+        autocompleteFragment.setHint("Enter a location");
+        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
+        autocompleteFragment.setPlaceFields(Collections.singletonList(Place.Field.LAT_LNG));
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NotNull Place place) {
+                getWeatherData(place.getLatLng().latitude, place.getLatLng().longitude);
+            }
+
+            @Override
+            public void onError(@NotNull Status status) {
+                System.out.println(status);
+            }
+        });
+    }
+
+    private void getCurrentLocationWeather() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
